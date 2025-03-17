@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   Headers,
@@ -25,6 +26,7 @@ import {
 import { HeadersDto } from './dto/headers.dto';
 import { RequestHeader } from './pipes/request-header';
 import { PropertyService } from './property.service';
+import { updatePropertyDto } from './dto/updateProperty.dto';
 
 @Controller('property')
 export class PropertyController {
@@ -51,8 +53,8 @@ export class PropertyController {
   //   }
 
   @Get(':id')
-  findOne(@Param() param: IdParamDto) {
-    return this.propertyService.findOne();
+  findOne(@Param('id' , ParseIntPipe) id) {
+    return this.propertyService.findOne(id);
   }
 
   // @Get(":id/:slug")
@@ -85,9 +87,9 @@ export class PropertyController {
   //   }
 
   @Post()
-  @UsePipes(new ZodValidationPipe(createPropertySchema))
-  create(@Body() body: CreatePropertyZodDto) {
-    return this.propertyService.create();
+  // @UsePipes(new ZodValidationPipe(createPropertySchema))
+  create(@Body() dto: CreatePropertyDto) {
+    return this.propertyService.create(dto);
   }
 
   // @Post()
@@ -96,29 +98,34 @@ export class PropertyController {
   //     return name;
   // }
 
-  //   @Patch(':id')
-  //   update(@Param() {id}: IdParamDto, @Body() body: CreatePropertyDto) {
-  //     return body;
-  //   }
+    // @Patch(':id')
+    // update(@Param() {id}: IdParamDto, @Body() body: CreatePropertyDto) {
+    //   return body;
+    // }
 
-  //   @Patch(':id')
-  //   update(
-  //     @Param('id', ParseIdPipe) id,
-  //     @Body() body: CreatePropertyDto,
-  //   ) {
-  //     return body;
-  //   }
+    @Patch(':id')
+    update(
+      @Param('id', ParseIdPipe) id,
+      @Body() body: updatePropertyDto,
+    ) {
+      return this.propertyService.update(id,body)
+    }
 
-  @Patch(':id')
-  update(
-    @Param('id', ParseIdPipe)
-    @Body()
-    body: CreatePropertyDto,
-    @RequestHeader(
-      new ValidationPipe({ whitelist: true, validateCustomDecorators: true }),
-    )
-    header: HeadersDto,
-  ) {
-    return this.propertyService.update();
-  }
+    @Delete(":id")
+    delete(@Param("id" , ParseIdPipe) id){
+      this.propertyService.delete(id);
+    }
+
+  // @Patch(':id')
+  // update(
+  //   @Param('id', ParseIdPipe)
+  //   @Body()
+  //   body: CreatePropertyDto,
+  //   @RequestHeader(
+  //     new ValidationPipe({ whitelist: true, validateCustomDecorators: true }),
+  //   )
+  //   header: HeadersDto,
+  // ) {
+  //   return this.propertyService.update();
+  // }
 }
