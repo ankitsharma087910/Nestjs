@@ -24,12 +24,22 @@ import {
 } from './dto/createPropertyZod.dto';
 import { HeadersDto } from './dto/headers.dto';
 import { RequestHeader } from './pipes/request-header';
+import { PropertyService } from './property.service';
 
 @Controller('property')
 export class PropertyController {
+  // don't create your dependency use dependency injection
+  // propertyService:PropertyService;
+  // constructor(){
+  //     this.propertyService = new PropertyService();
+  // }
+
+
+  constructor(private propertyService:PropertyService) {}
+
   @Get()
   findAll() {
-    return 'All properties';
+    return this.propertyService.findAll();
   }
 
   //   @Get(':id')
@@ -42,7 +52,7 @@ export class PropertyController {
 
   @Get(':id')
   findOne(@Param() param: IdParamDto) {
-    return param.id;
+    return this.propertyService.findOne();
   }
 
   // @Get(":id/:slug")
@@ -77,7 +87,7 @@ export class PropertyController {
   @Post()
   @UsePipes(new ZodValidationPipe(createPropertySchema))
   create(@Body() body: CreatePropertyZodDto) {
-    return body;
+    return this.propertyService.create();
   }
 
   // @Post()
@@ -100,10 +110,15 @@ export class PropertyController {
   //   }
 
   @Patch(':id')
-  update(@Param('id', ParseIdPipe) 
-  @Body() body: CreatePropertyDto ,
-  @RequestHeader(new ValidationPipe({whitelist:true , validateCustomDecorators:true})) header : HeadersDto
-) {
-    return header;
+  update(
+    @Param('id', ParseIdPipe)
+    @Body()
+    body: CreatePropertyDto,
+    @RequestHeader(
+      new ValidationPipe({ whitelist: true, validateCustomDecorators: true }),
+    )
+    header: HeadersDto,
+  ) {
+    return this.propertyService.update();
   }
 }
