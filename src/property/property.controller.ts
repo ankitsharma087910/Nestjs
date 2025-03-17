@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  Header,
+  Headers,
   HttpCode,
   Param,
   ParseBoolPipe,
@@ -16,7 +18,12 @@ import { CreatePropertyDto } from './dto/createProperty.dto';
 import { IdParamDto } from './dto/idParam.dto';
 import { ParseIdPipe } from './pipes/parseIdpipe';
 import { ZodValidationPipe } from './pipes/zodValidationPipe';
-import { createPropertySchema, CreatePropertyZodDto } from './dto/createPropertyZod.dto';
+import {
+  createPropertySchema,
+  CreatePropertyZodDto,
+} from './dto/createPropertyZod.dto';
+import { HeadersDto } from './dto/headers.dto';
+import { RequestHeader } from './pipes/request-header';
 
 @Controller('property')
 export class PropertyController {
@@ -69,7 +76,7 @@ export class PropertyController {
 
   @Post()
   @UsePipes(new ZodValidationPipe(createPropertySchema))
-  create(@Body() body : CreatePropertyZodDto) {
+  create(@Body() body: CreatePropertyZodDto) {
     return body;
   }
 
@@ -84,11 +91,19 @@ export class PropertyController {
   //     return body;
   //   }
 
+  //   @Patch(':id')
+  //   update(
+  //     @Param('id', ParseIdPipe) id,
+  //     @Body() body: CreatePropertyDto,
+  //   ) {
+  //     return body;
+  //   }
+
   @Patch(':id')
-  update(
-    @Param('id', ParseIdPipe) id,
-    @Body() body: CreatePropertyDto,
-  ) {
-    return body;
+  update(@Param('id', ParseIdPipe) 
+  @Body() body: CreatePropertyDto ,
+  @RequestHeader(new ValidationPipe({whitelist:true , validateCustomDecorators:true})) header : HeadersDto
+) {
+    return header;
   }
 }
